@@ -1,9 +1,17 @@
 import axios from "axios";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/libs/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
+
     CredentialsProvider({
       credentials: {
         password: {
@@ -13,7 +21,7 @@ export const authOptions: NextAuthOptions = {
         username: {
           label: "username",
           type: "text",
-          placeholder: "Admin Hology",
+          placeholder: "Username",
         },
       },
 
@@ -44,9 +52,10 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: "/signin",
-  },
+  adapter: PrismaAdapter(prisma),
+  // pages: {
+  //   signIn: "/signin",
+  // },
   session: {
     strategy: "jwt",
   },
